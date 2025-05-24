@@ -6,34 +6,16 @@ import org.springframework.stereotype.Service
 
 @Service
 class RotinaService(
-    private val rotinaRepository: RotinaRepository //Injeção do Repository
+    private val rotinaRepository: RotinaRepository
 ) {
 
-    fun buscarPorTipos(tipo: String): List<Rotina> {
-        return rotinaRepository.buscarPorTipos(tipo)
+    fun encontrarTodos(): List<Rotina> = rotinaRepository.encontrarTodos()
+
+    fun encontrarRotina(codigo: String): Rotina? = rotinaRepository.encontrarPorId(codigo)
+
+    fun registrarRotina(rotina: Rotina): Rotina {
+        return rotinaRepository.salvar(rotina)
     }
 
-    fun registrarRotina(
-        codigo: String,
-        descricao: String?//pode ser nulo
-    ): Rotina {
-        return rotinaRepository.salvar(
-            Rotina(
-                codigo = codigo,
-                descricao = descricao
-            )
-        )
-    }
-
-    fun encontrarRotina(codigo: String): Rotina? {
-        return rotinaRepository.buscarId(codigo)
-    }
-
-    fun encontrarTodos(): List<Rotina> {
-        return rotinaRepository.buscarTodos()
-    }
-
-    fun excluirRegistro(codigo: String): Boolean {
-        return rotinaRepository.excluirId(codigo)
-    }
+    fun excluirRegistro(codigo: String): Boolean = rotinaRepository.excluir(codigo)
 }

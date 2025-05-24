@@ -1,54 +1,49 @@
 package com.gerenciadorDeRotinas.gerenciadorDeRotinas.repository
 
 import com.gerenciadorDeRotinas.gerenciadorDeRotinas.model.Rotina
-import com.google.cloud.firestore.Firestore
 import org.springframework.stereotype.Repository
+import com.google.firebase.cloud.FirestoreClient
+import com.google.api.core.ApiFuture
+import com.google.cloud.firestore.*
 
 @Repository
-class RotinaRepository(//Essa val é a instância do banco
-    private val firestore: Firestore //= FirestoreClient.getFirestore()//Buscar em um JSON
-) {
-    private val collectionName = "home" //O nome da coleção é o que esta no Firebase
+class RotinaRepository {
+
+    private val collectionName = "rotinas"
 
     fun salvar(rotina: Rotina): Rotina {
-        val documento =
-            firestore.collection(collectionName).document(rotina.codigo!!)//Busca um documento pelo ID
-
-        val rotinaSalva = rotina.copy(codigo = documento.id)//Copia do que foi resgatado do banco
-        documento.set(rotinaSalva)//Edita ou cria os valores de cada CHAVE
-        return rotinaSalva//retorna as alterações ou criações
-    }
-
-    fun buscarId(codigo: String): Rotina? {
-        val documento = firestore.collection(collectionName)
-            .document(codigo).get().get()//Retorna os dados da referência
-        return if (documento.exists())
-            documento.toObject(Rotina::class.java)
-        else
-            null
-    }
-
-    fun buscarTodos(): List<Rotina> {
-        val query = firestore.collection(collectionName)
-            .get().get()//Retorna todos os documentos da coleção
-        //a query vem em vários JSON, basta converte para uma lista
-        //um de cada vez
-        return query.documents.mapNotNull { rotinas ->
-            rotinas.toObject(Rotina::class.java)
+        val db = FirestoreClient.getFirestore()
+        val docRef = if (rotina.codigo == null) {
+            db.collection(collectionName).document()
+        } else {
+            db.collection(collectionName).document(rotina.codigo)
         }
+
+        val rotinaComId = rotina.copy(codigo = docRef.id)
+        val future: ApiFuture<WriteResult> = docRef.set(rotinaComId)
+        future.get() // aguarda conclusão da escrita
+
+        return rotinaComId
     }
 
-    fun buscarPorTipos(tipo: String): List<Rotina> { //busca personalizada
-        val query = firestore.collection(collectionName).whereEqualTo("tipo_1", tipo.uppercase())
-            .get().get()//Retorna todos os documentos da coleção
-        return query.documents.mapNotNull { rotinas ->
-            rotinas.toObject(Rotina::class.java)
-        }
+    fun encontrarTodos(): List<Rotina> {
+        val db = FirestoreClient.getFirestore()
+        val future: ApiFuture<QuerySnapshot> = db.collection(collectionName).get()
+        val documents = future.get().documents
+        return documents.mapNotNull { it.toObject(Rotina::class.java) }
     }
 
-    fun excluirId(codigo: String): Boolean {
-        //Busca um documento igual na buscaID, mas aqui deleta ele
-        firestore.collection(collectionName).document(codigo).delete()
+    fun encontrarPorId(codigo: String): Rotina? {
+        val db = FirestoreClient.getFirestore()
+        val future: ApiFuture<DocumentSnapshot> = db.collection(collectionName).document(codigo).get()
+        val document = future.get()
+        return if (document.exists()) document.toObject(Rotina::class.java) else null
+    }
+
+    fun excluir(codigo: String): Boolean {
+        val db = FirestoreClient.getFirestore()
+        val future: ApiFuture<WriteResult> = db.collection(collectionName).document(codigo).delete()
+        future.get()
         return true
     }
 }

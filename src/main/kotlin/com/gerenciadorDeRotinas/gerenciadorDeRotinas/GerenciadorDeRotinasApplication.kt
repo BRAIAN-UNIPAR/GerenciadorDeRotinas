@@ -8,5 +8,5 @@ class GerenciadorDeRotinasApplication
 
 fun main(args: Array<String>) {
 	runApplication<GerenciadorDeRotinasApplication>(*args)
-	println("alo")
+	//println("alo")
 }
