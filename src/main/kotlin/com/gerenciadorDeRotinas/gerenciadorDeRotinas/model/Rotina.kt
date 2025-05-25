@@ -2,13 +2,13 @@ package com.gerenciadorDeRotinas.gerenciadorDeRotinas.model
 
 data class Rotina(
     val codigo: String? = null,
-    val nome: String? = null,
-    val colaborador: String? = null,
-    val objetivo: String? = null,
-    val instrucoes: String? = null,
-    val dataDeExecucao: String? = null,
-    val horarioDeExecucao: String? = null,
-    val tempoDecorrido: Long? = null,
-    val horarioConclusao: String? = null,
-    val concluido: Boolean = false
+    var nome: String? = null,
+    var colaborador: String? = null,
+    var objetivo: String? = null,
+    var instrucoes: String? = null,
+    var dataDeExecucao: String? = null,
+    var horarioDeExecucao: String? = null,
+    var tempoDecorrido: Long? = null,
+    var horarioConclusao: String? = null,
+    var concluido: Boolean = false
 )

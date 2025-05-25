@@ -46,4 +46,22 @@ class RotinaRepository {
         future.get()
         return true
     }
+
+    fun atualizarStatus(codigo: String, concluido: Boolean, tempoDecorrido: Long?, horarioConclusao: String?): Rotina? {
+        val db = FirestoreClient.getFirestore()
+        val docRef = db.collection(collectionName).document(codigo)
+
+
+        val updates = hashMapOf<String, Any>(
+            "concluido" to concluido,
+            "tempoDecorrido" to (tempoDecorrido ?: 0L),
+            "horarioConclusao" to (horarioConclusao ?: "")
+        )
+
+        val future: ApiFuture<WriteResult> = docRef.update(updates)
+        future.get() // Aguarda completar
+
+        // Retorna a rotina atualizada
+        return encontrarPorId(codigo)
+    }
 }

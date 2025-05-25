@@ -9,6 +9,7 @@ class RotinaService(
     private val rotinaRepository: RotinaRepository
 ) {
 
+    //Métodos
     fun encontrarTodos(): List<Rotina> = rotinaRepository.encontrarTodos()
 
     fun encontrarRotina(codigo: String): Rotina? = rotinaRepository.encontrarPorId(codigo)
@@ -18,4 +19,9 @@ class RotinaService(
     }
 
     fun excluirRegistro(codigo: String): Boolean = rotinaRepository.excluir(codigo)
+
+
+    fun atualizarStatus(codigo: String, concluido: Boolean, tempoDecorrido: Long?, horarioConclusao: String?): Rotina? {
+        return rotinaRepository.atualizarStatus(codigo, concluido, tempoDecorrido, horarioConclusao)
+    }
 }
