@@ -13,7 +13,7 @@ class WebConfig {
         return object : WebMvcConfigurer {
             override fun addCorsMappings(registry: CorsRegistry) {
                 registry.addMapping("/**")
-                    .allowedOrigins("http://localhost:5173") // Aqui vai o endereço do seu frontend
+                    .allowedOrigins("http://localhost:5173") //endereço do front
                     .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
             }
         }
